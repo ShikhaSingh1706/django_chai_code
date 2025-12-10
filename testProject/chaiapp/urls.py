@@ -1,9 +1,9 @@
 
 from django.urls import path
-from . import views
+from .views import all_chai, chai_detail, chai_store_view
 
 urlpatterns = [
-    path('', views.all_chai, name="all_chai"),
-    path('<int:chai_id>/',views.chai_detail, name="chai_detail"),
-    path('chai_stores/',views.chai_store_view, name="chai_store_view")
+    path('', all_chai.as_view(), name="all_chai"),
+    path('<int:chai_id>/',chai_detail.as_view(), name="chai_detail"),
+    path('chai_stores/',chai_store_view.as_view(), name="chai_store_view")
 ]

@@ -1,25 +1,38 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import chaiVariety, store
-from django.shortcuts import  get_object_or_404
 from .forms import chaiVarietyForm
+from django.views import View
+
 
 # Create your views here.
-def all_chai(request):
-    chai_show=chaiVariety.objects.all()
-    return render(request, 'chaiapp/all_chai.html',{'chais':chai_show})
+class all_chai(View):
+    def get(self,request):
+            chai_show=chaiVariety.objects.all()
+            return render(request, 'chaiapp/all_chai.html',{'chais':chai_show})
 
-def chai_detail(request, chai_id):
-    chai=get_object_or_404(chaiVariety,pk=chai_id)
-    return render(request,'chaiapp/chai_detail.html',{'chai':chai})
+class chai_detail(View):
+    def get(self,request,chai_id):
+        chai=get_object_or_404(chaiVariety,pk=chai_id)
+        return render(request,'chaiapp/chai_detail.html',{'chai':chai})
 
 
-def chai_store_view(request):
-    stores=None
-    if request.method=='POST':
+class chai_store_view(View):
+    def get(self,request):
+        stores=store.objects.all()
+        form=chaiVarietyForm()
+        return render(
+            request, 'chaiapp/chai_stores.html',
+            {'form':form,'stores':stores}
+        )
+    def post(self,request):
         form=chaiVarietyForm(request.POST)
+        stores=store.objects.all()
+
         if form.is_valid():
             chai_variety=form.cleaned_data['chai_variety']
             stores=store.objects.filter(chai_varieties=chai_variety)
-    else:
-        form=chaiVarietyForm()   
-    return render(request,'chaiapp/chai_stores.html',{'stores':stores,'form':form})
+
+        return render(
+            request,'chaiapp/chai_stores.html',{'form':form,"stores":stores}
+        )    
+    
